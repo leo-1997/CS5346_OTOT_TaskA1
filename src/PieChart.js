@@ -68,7 +68,7 @@ const PieRechartComponent = () => {
 
 
     return (
-        <PieChart width={1030} height={850}>
+        <PieChart width={1130} height={850}>
             <Pie
                 data={cryptoData}
                 color="#000000"
