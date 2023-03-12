@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
+import { PieChart, Pie, Cell, Tooltip, Legend, LabelList } from "recharts";
 import cryptoData from './data/crypto_market_cap.json';
 import PriceChart from "./LineChart"
 
@@ -38,7 +38,7 @@ const renderTooltipContent = (props) => {
                 border: "1px solid"
             }}>
                 <label>{`${payload[0].name} Market Cap: ${`$` + Number(payload[0].value) / 10000}M`}</label>
-                <PriceChart stokeColor={COLORS[index % COLORS.length]} index = {index} />
+                <PriceChart stokeColor={COLORS[index % COLORS.length]} index={index} />
             </div>
         );
     }
@@ -54,8 +54,21 @@ const PieRechartComponent = () => {
         setActiveIndex(index);
     };
 
+    const totalMarketCap = cryptoData.reduce((acc, curr) => acc + curr.market_cap, 0);
+
+    let renderPercent = function () {
+        return totalMarketCap
+    }
+
+    const CustomizedLabel = (index, label) => {
+        return (
+            <text dy={-4} fill={COLORS[index % COLORS.length]} fontSize={10} >{label}</text>
+        );
+    }
+
+
     return (
-        <PieChart width={730} height={300}>
+        <PieChart width={1030} height={850}>
             <Pie
                 data={cryptoData}
                 color="#000000"
@@ -63,9 +76,10 @@ const PieRechartComponent = () => {
                 nameKey="name"
                 cx="50%"
                 cy="50%"
-                outerRadius={120}
+                outerRadius={360}
                 fill="#8884d8"
                 onMouseEnter={onPieEnter}
+                label={({ name, market_cap }) => `${name} (${((market_cap / totalMarketCap) * 100).toFixed(2)}%)`}
             >
                 {cryptoData.map((entry, index) => (
                     <Cell
@@ -75,10 +89,9 @@ const PieRechartComponent = () => {
                 ))}
             </Pie>
             <Tooltip content={renderTooltipContent} index={activeIndex} />
-            <Legend />
+            <Legend wrapperStyle={{ top: "800px" }} />
         </PieChart>
     );
-    // }
 }
 
 export default PieRechartComponent;
